@@ -13,26 +13,63 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setCentralWidget(centralWidget);
     layout = new QVBoxLayout(centralWidget);
 
-    // Create buttons for loading and unloading components
-    QPushButton* loadCounterButton = new QPushButton("Load Counter", this);
-    QPushButton* unloadCounterButton = new QPushButton("Unload Counter", this);
-    QPushButton* loadColorChangerButton = new QPushButton("Load Color Changer", this);
-    QPushButton* unloadColorChangerButton = new QPushButton("Unload Color Changer", this);
-
-    // Add buttons to layout
+    // Create a layout for component buttons
     QVBoxLayout* buttonLayout = new QVBoxLayout();
-    buttonLayout->addWidget(loadCounterButton);
-    buttonLayout->addWidget(unloadCounterButton);
-    buttonLayout->addWidget(loadColorChangerButton);
-    buttonLayout->addWidget(unloadColorChangerButton);
     layout->addLayout(buttonLayout);
     layout->addStretch(); // Push components to top
 
-    // Connect buttons to slots
-    connect(loadCounterButton, &QPushButton::clicked, this, &MainWindow::onLoadCounter);
-    connect(unloadCounterButton, &QPushButton::clicked, this, &MainWindow::onUnloadCounter);
-    connect(loadColorChangerButton, &QPushButton::clicked, this, &MainWindow::onLoadColorChanger);
-    connect(unloadColorChangerButton, &QPushButton::clicked, this, &MainWindow::onUnloadColorChanger);
+    // Find and create buttons for available plugins
+    QStringList plugins = findAvailablePlugins();
+    for (const QString& plugin : plugins) {
+        QPushButton* loadButton = new QPushButton("Load " + plugin, this);
+        QPushButton* unloadButton = new QPushButton("Unload " + plugin, this);
+        
+        // Store buttons for later use
+        loadButtons[plugin] = loadButton;
+        unloadButtons[plugin] = unloadButton;
+        
+        // Add buttons to layout
+        buttonLayout->addWidget(loadButton);
+        buttonLayout->addWidget(unloadButton);
+        
+        // Connect buttons to slots using lambda functions to pass the plugin name
+        connect(loadButton, &QPushButton::clicked, this, [this, plugin]() {
+            onLoadComponent(plugin);
+        });
+        connect(unloadButton, &QPushButton::clicked, this, [this, plugin]() {
+            onUnloadComponent(plugin);
+        });
+        
+        // Initially disable unload button
+        unloadButton->setEnabled(false);
+    }
+}
+
+QStringList MainWindow::findAvailablePlugins() {
+    QStringList result;
+    QDir pluginsDir(QDir::currentPath() + "/plugins");
+    
+    // List all files in the plugins directory
+    QStringList entries = pluginsDir.entryList(QDir::Files);
+    
+    // Filter and clean up plugin names
+    for (const QString& entry : entries) {
+        QString baseName = entry;
+#ifdef Q_OS_MAC
+        if (baseName.endsWith(".dylib")) {
+            baseName.chop(6); // Remove .dylib
+            result.append(baseName);
+        }
+#else
+        if (baseName.startsWith("lib") && baseName.endsWith(".so")) {
+            baseName.remove(0, 3); // Remove lib
+            baseName.chop(3);      // Remove .so
+            result.append(baseName);
+        }
+#endif
+    }
+    
+    return result;
 }
 
 QString MainWindow::getPluginPath(const QString& name) {
@@ -44,9 +81,9 @@ QString MainWindow::getPluginPath(const QString& name) {
 #endif
 }
 
-void MainWindow::onLoadCounter() {
-    if (!loadedComponents.contains("counter")) {
-        QString pluginPath = getPluginPath("counter");
+void MainWindow::onLoadComponent(const QString& name) {
+    if (!loadedComponents.contains(name)) {
+        QString pluginPath = getPluginPath(name);
         qDebug() << "Loading plugin from:" << pluginPath;
         QPluginLoader loader(pluginPath);
         QObject* plugin = loader.instance();
@@ -56,62 +93,34 @@ void MainWindow::onLoadCounter() {
             if (component) {
                 QWidget* widget = component->createWidget();
                 layout->addWidget(widget);
-                loadedComponents["counter"] = component;
-                componentWidgets["counter"] = widget;
+                loadedComponents[name] = component;
+                componentWidgets[name] = widget;
+                
+                // Update button states
+                loadButtons[name]->setEnabled(false);
+                unloadButtons[name]->setEnabled(true);
             }
         } else {
-            qDebug() << "Failed to load counter plugin:" << loader.errorString();
+            qDebug() << "Failed to load plugin:" << name << "-" << loader.errorString();
         }
     }
 }
 
-void MainWindow::onUnloadCounter() {
-    if (loadedComponents.contains("counter")) {
-        QWidget* widget = componentWidgets["counter"];
+void MainWindow::onUnloadComponent(const QString& name) {
+    if (loadedComponents.contains(name)) {
+        QWidget* widget = componentWidgets[name];
         layout->removeWidget(widget);
-        loadedComponents["counter"]->destroyWidget(widget);
-        componentWidgets.remove("counter");
+        loadedComponents[name]->destroyWidget(widget);
+        componentWidgets.remove(name);
         
-        QString pluginPath = getPluginPath("counter");
+        QString pluginPath = getPluginPath(name);
         QPluginLoader loader(pluginPath);
         loader.unload();
         
-        loadedComponents.remove("counter");
-    }
-}
-
-void MainWindow::onLoadColorChanger() {
-    if (!loadedComponents.contains("colorchanger")) {
-        QString pluginPath = getPluginPath("colorchanger");
-        qDebug() << "Loading plugin from:" << pluginPath;
-        QPluginLoader loader(pluginPath);
-        QObject* plugin = loader.instance();
+        loadedComponents.remove(name);
         
-        if (plugin) {
-            IComponent* component = qobject_cast<IComponent*>(plugin);
-            if (component) {
-                QWidget* widget = component->createWidget();
-                layout->addWidget(widget);
-                loadedComponents["colorchanger"] = component;
-                componentWidgets["colorchanger"] = widget;
-            }
-        } else {
-            qDebug() << "Failed to load color changer plugin:" << loader.errorString();
-        }
-    }
-}
-
-void MainWindow::onUnloadColorChanger() {
-    if (loadedComponents.contains("colorchanger")) {
-        QWidget* widget = componentWidgets["colorchanger"];
-        layout->removeWidget(widget);
-        loadedComponents["colorchanger"]->destroyWidget(widget);
-        componentWidgets.remove("colorchanger");
-        
-        QString pluginPath = getPluginPath("colorchanger");
-        QPluginLoader loader(pluginPath);
-        loader.unload();
-        
-        loadedComponents.remove("colorchanger");
+        // Update button states
+        loadButtons[name]->setEnabled(true);
+        unloadButtons[name]->setEnabled(false);
     }
 } 
