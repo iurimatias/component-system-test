@@ -9,8 +9,11 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
-# Include the main application's interface directory
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../mainapp)
+# Add the interfaces directory
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../interfaces ${CMAKE_BINARY_DIR}/interfaces)
+
+# Add the root directory to include path for interface headers
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 set(SOURCES
     CounterComponent.cpp
@@ -18,7 +21,12 @@ set(SOURCES
 )
 
 add_library(counter SHARED ${SOURCES})
-target_link_libraries(counter PRIVATE Qt6::Core Qt6::Widgets)
+target_link_libraries(counter 
+    PRIVATE 
+        Qt6::Core 
+        Qt6::Widgets
+        component-interfaces
+)
 
 # For macOS, we need to set the bundle properties
 if(APPLE)

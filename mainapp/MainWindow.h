@@ -2,9 +2,9 @@
 
 #include <QMainWindow>
 #include <QMap>
+#include <interfaces/IComponent.h>
 
 class QVBoxLayout;
-class IComponent;
 class QPushButton;
 
 class MainWindow : public QMainWindow {

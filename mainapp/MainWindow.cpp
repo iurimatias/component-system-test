@@ -1,5 +1,5 @@
 #include "MainWindow.h"
-#include "IComponent.h"
+#include <interfaces/IComponent.h>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QPluginLoader>

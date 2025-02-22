@@ -1,6 +1,8 @@
 #pragma once
 
+#include <QObject>
 #include <QWidget>
+#include <QtPlugin>
 
 class IComponent {
 public:

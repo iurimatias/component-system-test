@@ -9,5 +9,8 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
+# Add the interfaces library first
+add_subdirectory(interfaces)
+
 # Only build the main application
 add_subdirectory(mainapp) 
