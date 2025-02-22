@@ -7,7 +7,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+# Set the path to Qt installation
+# set(Qt6_DIR "/opt/homebrew/Cellar/qt/6.8.2/lib/cmake/Qt6")
+# set(CMAKE_PREFIX_PATH "/opt/homebrew/Cellar/qt/6.8.2")
+
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Quick QuickWidgets)
 
 # Try to find the component-interfaces package first
 find_package(component-interfaces QUIET)
@@ -27,6 +31,8 @@ target_link_libraries(mainapp
     PRIVATE 
         Qt6::Core 
         Qt6::Widgets
+        Qt6::Quick
+        Qt6::QuickWidgets
         component-interfaces
 )
 
