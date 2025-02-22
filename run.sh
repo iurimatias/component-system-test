@@ -4,7 +4,7 @@
 set -e
 
 # Check if the application exists
-if [ ! -f "build/app/mainapp/mainapp" ]; then
+if [ ! -f "build/app/mainapp" ]; then
     echo "Application not found. Building main application..."
     ./build.sh main
 fi
@@ -15,4 +15,4 @@ mkdir -p build/app/plugins
 
 # Run the application from the build directory
 cd build/app
-./mainapp/mainapp
+./mainapp

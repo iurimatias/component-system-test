@@ -23,8 +23,9 @@ build_main() {
     echo "Building main application..."
     mkdir -p build/app
     cd build/app
-    cmake ../.. 
+    cmake ../../mainapp
     cmake --build .
+    mkdir -p plugins
     echo "Main application built successfully!"
 }
 
@@ -35,10 +36,9 @@ build_counter() {
     cd build/counter
     cmake ../../components/counter
     cmake --build .
-    mkdir -p ../plugins
-    cp counter.dylib ../plugins/
+    cp counter.dylib ../app/plugins/
     echo "Counter plugin built successfully!"
-    echo "Plugin location: $(pwd)/../plugins/counter.dylib"
+    echo "Plugin location: $(pwd)/../app/plugins/counter.dylib"
 }
 
 # Function to build colorchanger plugin
@@ -48,10 +48,9 @@ build_colorchanger() {
     cd build/colorchanger
     cmake ../../components/colorchanger
     cmake --build .
-    mkdir -p ../plugins
-    cp colorchanger.dylib ../plugins/
+    cp colorchanger.dylib ../app/plugins/
     echo "Color changer plugin built successfully!"
-    echo "Plugin location: $(pwd)/../plugins/colorchanger.dylib"
+    echo "Plugin location: $(pwd)/../app/plugins/colorchanger.dylib"
 }
 
 # Function to build everything

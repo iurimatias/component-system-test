@@ -9,11 +9,13 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
-# Add the interfaces directory
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../interfaces ${CMAKE_BINARY_DIR}/interfaces)
+# Try to find the component-interfaces package first
+find_package(component-interfaces QUIET)
 
-# Add the root directory to include path for interface headers
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../..)
+# If not found, build it from source
+if(NOT component-interfaces_FOUND)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../interfaces interfaces_build)
+endif()
 
 set(SOURCES
     CounterComponent.cpp
@@ -21,6 +23,10 @@ set(SOURCES
 )
 
 add_library(counter SHARED ${SOURCES})
+
+# Add include directories before target_link_libraries
+target_include_directories(counter PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+
 target_link_libraries(counter 
     PRIVATE 
         Qt6::Core 
