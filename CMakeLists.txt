@@ -9,7 +9,5 @@ set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
-# Add subdirectories
-add_subdirectory(components/counter)
-add_subdirectory(components/colorchanger)
+# Only build the main application
 add_subdirectory(mainapp) 
