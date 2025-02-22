@@ -16,16 +16,19 @@ public:
 private slots:
     void onLoadComponent(const QString& name);
     void onUnloadComponent(const QString& name);
+    void onReloadPlugins();
 
 private:
     QString getPluginPath(const QString& name);
     QStringList findAvailablePlugins();
-    QPushButton* createComponentButtons(const QString& componentName);
+    void setupPluginButtons(QVBoxLayout* buttonLayout);
+    void clearPluginButtons();
     
     QMap<QString, IComponent*> loadedComponents;
     QMap<QString, QWidget*> componentWidgets;
     QMap<QString, QPushButton*> loadButtons;
     QMap<QString, QPushButton*> unloadButtons;
     QVBoxLayout* layout;
+    QVBoxLayout* buttonLayout;  // Store buttonLayout for reuse
     QWidget* centralWidget;
 }; 

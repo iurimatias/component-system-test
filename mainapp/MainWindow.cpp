@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QHBoxLayout>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     // Set up central widget and layout
@@ -13,11 +14,38 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
     setCentralWidget(centralWidget);
     layout = new QVBoxLayout(centralWidget);
 
+    // Create reload button at the top
+    QHBoxLayout* topLayout = new QHBoxLayout();
+    QPushButton* reloadButton = new QPushButton("Reload Plugins", this);
+    topLayout->addWidget(reloadButton);
+    topLayout->addStretch();
+    layout->addLayout(topLayout);
+
     // Create a layout for component buttons
-    QVBoxLayout* buttonLayout = new QVBoxLayout();
+    buttonLayout = new QVBoxLayout();
     layout->addLayout(buttonLayout);
     layout->addStretch(); // Push components to top
 
+    // Connect reload button
+    connect(reloadButton, &QPushButton::clicked, this, &MainWindow::onReloadPlugins);
+
+    // Initial plugin setup
+    setupPluginButtons(buttonLayout);
+}
+
+void MainWindow::clearPluginButtons() {
+    // Delete all existing buttons and clear maps
+    for (auto button : loadButtons.values()) {
+        button->deleteLater();
+    }
+    for (auto button : unloadButtons.values()) {
+        button->deleteLater();
+    }
+    loadButtons.clear();
+    unloadButtons.clear();
+}
+
+void MainWindow::setupPluginButtons(QVBoxLayout* buttonLayout) {
     // Find and create buttons for available plugins
     QStringList plugins = findAvailablePlugins();
     for (const QString& plugin : plugins) {
@@ -40,9 +68,25 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
             onUnloadComponent(plugin);
         });
         
-        // Initially disable unload button
-        unloadButton->setEnabled(false);
+        // Set initial button states
+        loadButton->setEnabled(!loadedComponents.contains(plugin));
+        unloadButton->setEnabled(loadedComponents.contains(plugin));
     }
+}
+
+void MainWindow::onReloadPlugins() {
+    QStringList currentPlugins = loadedComponents.keys();
+    
+    // Unload all currently loaded plugins
+    for (const QString& plugin : currentPlugins) {
+        onUnloadComponent(plugin);
+    }
+    
+    // Clear existing buttons
+    clearPluginButtons();
+    
+    // Set up new buttons
+    setupPluginButtons(buttonLayout);
 }
 
 QStringList MainWindow::findAvailablePlugins() {
@@ -119,8 +163,10 @@ void MainWindow::onUnloadComponent(const QString& name) {
         
         loadedComponents.remove(name);
         
-        // Update button states
-        loadButtons[name]->setEnabled(true);
-        unloadButtons[name]->setEnabled(false);
+        // Update button states if the buttons still exist
+        if (loadButtons.contains(name)) {
+            loadButtons[name]->setEnabled(true);
+            unloadButtons[name]->setEnabled(false);
+        }
     }
 } 
