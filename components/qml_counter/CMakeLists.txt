@@ -35,10 +35,7 @@ add_library(qml_counter SHARED ${SOURCES})
 target_include_directories(qml_counter PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../../
-    ${Qt6Core_INCLUDE_DIRS}
-    ${Qt6Widgets_INCLUDE_DIRS}
-    ${Qt6Quick_INCLUDE_DIRS}
-    ${Qt6QuickWidgets_INCLUDE_DIRS}
+    ${COMPONENTSYSTEM_SOURCE_DIR}/src
 )
 
 target_link_libraries(qml_counter PRIVATE
@@ -46,7 +43,7 @@ target_link_libraries(qml_counter PRIVATE
     Qt6::Widgets
     Qt6::Quick
     Qt6::QuickWidgets
-    component-interfaces
+    ComponentSystem
 )
 
 if(APPLE)
@@ -62,9 +59,9 @@ else()
 endif()
 
 # Create plugins directory if it doesn't exist
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/../plugins)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
 
 # Set the output directory for the plugin
 set_target_properties(qml_counter PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../plugins
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins
 ) 

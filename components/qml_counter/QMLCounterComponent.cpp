@@ -11,7 +11,11 @@ QMLCounterComponent::~QMLCounterComponent()
 {
 }
 
-QWidget* QMLCounterComponent::createWidget() {
+void QMLCounterComponent::initialize() {
+    // Any initialization code if needed
+}
+
+QQuickWidget* QMLCounterComponent::createWidget() {
     QQuickWidget* view = new QQuickWidget();
     view->setResizeMode(QQuickWidget::SizeRootObjectToView);
     view->setSource(QUrl("qrc:/counter.qml"));
@@ -19,6 +23,6 @@ QWidget* QMLCounterComponent::createWidget() {
     return view;
 }
 
-void QMLCounterComponent::destroyWidget(QWidget* widget) {
+void QMLCounterComponent::destroyWidget(QQuickWidget* widget) {
     delete widget;
 } 

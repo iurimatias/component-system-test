@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NEDRYSOFT_COLORCHANGER_COLORCHANGERWIDGET_H
+#define NEDRYSOFT_COLORCHANGER_COLORCHANGERWIDGET_H
 
 #include <QWidget>
 #include <QColor>
@@ -16,6 +17,8 @@ private slots:
 
 private:
     QPushButton* changeColorButton;
-    QList<QColor> colors = {Qt::red, Qt::green, Qt::blue, Qt::yellow};
-    int currentColorIndex = 0;
-}; 
+    QList<QColor> colors;
+    int currentColorIndex;
+};
+
+#endif // NEDRYSOFT_COLORCHANGER_COLORCHANGERWIDGET_H 

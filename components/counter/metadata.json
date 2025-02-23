@@ -1,0 +1,21 @@
+{
+    "Name": "Counter",
+    "Version": "1.0.0",
+    "CompatVersion": "1.0.0",
+    "Vendor": "example.com",
+    "Copyright": "(C) 2024",
+    "License": [
+        "Copyright (C) 2024",
+        "",
+        "This program is free software: you can redistribute it and/or modify",
+        "it under the terms of the GNU General Public License as published by",
+        "the Free Software Foundation, either version 3 of the License, or",
+        "(at your option) any later version."
+    ],
+    "Category": "Widgets",
+    "Description": [
+        "A simple counter widget component"
+    ],
+    "Dependencies": [],
+    "Url": "https://example.com/counter"
+} 

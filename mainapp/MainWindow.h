@@ -1,34 +1,35 @@
-#pragma once
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QVBoxLayout>
+#include <QPushButton>
 #include <QMap>
-#include <interfaces/IComponent.h>
-
-class QVBoxLayout;
-class QPushButton;
+#include <QSet>
+#include "Component.h"
+#include "ComponentLoader.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget* parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
 private slots:
-    void onLoadComponent(const QString& name);
-    void onUnloadComponent(const QString& name);
-    void onReloadPlugins();
+    void onLoadComponent(const QString &componentName);
+    void onUnloadComponent(const QString &componentName);
+    void updateComponentButtons();
+    void refreshWidgets();
 
 private:
-    QString getPluginPath(const QString& name);
-    QStringList findAvailablePlugins();
-    void setupPluginButtons(QVBoxLayout* buttonLayout);
-    void clearPluginButtons();
-    
-    QMap<QString, IComponent*> loadedComponents;
-    QMap<QString, QWidget*> componentWidgets;
-    QMap<QString, QPushButton*> loadButtons;
-    QMap<QString, QPushButton*> unloadButtons;
-    QVBoxLayout* layout;
-    QVBoxLayout* buttonLayout;  // Store buttonLayout for reuse
-    QWidget* centralWidget;
-}; 
+    QWidget *m_centralWidget;
+    QVBoxLayout *m_layout;
+    QVBoxLayout *m_buttonLayout;
+    QWidget *m_widgetContainer;
+    QVBoxLayout *m_widgetLayout;
+    Nedrysoft::ComponentSystem::ComponentLoader *m_componentLoader;
+    QSet<QString> m_loadedComponents;  // Track which components are loaded
+};
+
+#endif // MAINWINDOW_H 

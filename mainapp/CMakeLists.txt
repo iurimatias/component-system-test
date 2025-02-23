@@ -11,7 +11,7 @@ set(CMAKE_AUTOUIC ON)
 # set(Qt6_DIR "/opt/homebrew/Cellar/qt/6.8.2/lib/cmake/Qt6")
 # set(CMAKE_PREFIX_PATH "/opt/homebrew/Cellar/qt/6.8.2")
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Quick QuickWidgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
 # Try to find the component-interfaces package first
 find_package(component-interfaces QUIET)
@@ -24,17 +24,24 @@ endif()
 set(MAINAPP_SOURCES
     main.cpp
     MainWindow.cpp
+    MainWindow.h
 )
 
 add_executable(mainapp ${MAINAPP_SOURCES})
+
+# Add include directories for component system
+target_include_directories(mainapp PRIVATE
+    ${CMAKE_SOURCE_DIR}/vendor/componentsystem/src
+)
+
 target_link_libraries(mainapp 
     PRIVATE 
         Qt6::Core 
         Qt6::Widgets
-        Qt6::Quick
-        Qt6::QuickWidgets
-        component-interfaces
+        ComponentSystem
 )
 
-# Add the interfaces directory to the include path
-target_include_directories(mainapp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..) 
+# Set the output directory for the executable
+set_target_properties(mainapp PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+) 

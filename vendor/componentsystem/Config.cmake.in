@@ -1,0 +1,9 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+find_dependency(Qt6 COMPONENTS Core Widgets)
+
+include("${CMAKE_CURRENT_LIST_DIR}/../../../lib/cmake/NedrysoftComponentSystem/NedrysoftComponentSystemTargets.cmake" OPTIONAL)
+
+set(NEDRYSOFT_COMPONENTSYSTEM_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/include")
+set(NEDRYSOFT_COMPONENTSYSTEM_LIBRARIES ComponentSystem) 

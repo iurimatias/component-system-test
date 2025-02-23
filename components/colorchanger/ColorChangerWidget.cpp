@@ -3,7 +3,14 @@
 #include <QVBoxLayout>
 #include <QPalette>
 
-ColorChangerWidget::ColorChangerWidget(QWidget* parent) : QWidget(parent) {
+ColorChangerWidget::ColorChangerWidget(QWidget* parent) : 
+    QWidget(parent),
+    changeColorButton(nullptr),
+    currentColorIndex(0) {
+    
+    // Initialize colors
+    colors = {Qt::red, Qt::green, Qt::blue, Qt::yellow};
+
     // Create UI elements
     changeColorButton = new QPushButton("Change Color", this);
 

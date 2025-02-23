@@ -1,0 +1,9 @@
+#ifndef NEDRYSOFT_COMPONENTSYSTEM_COMPONENTSYSTEM_H
+#define NEDRYSOFT_COMPONENTSYSTEM_COMPONENTSYSTEM_H
+
+#include "../src/ComponentSystemSpec.h"
+#include "../src/IComponentManager.h"
+#include "../src/ComponentLoader.h"
+#include "../src/Component.h"
+
+#endif // NEDRYSOFT_COMPONENTSYSTEM_COMPONENTSYSTEM_H 
